@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitor Polusi Udara Futuristik</title>
+  <title>Monitor Polusi Udara</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Orbitron', sans-serif;
-      background: linear-gradient(135deg, #1a1a1a, #2c2c2c);
-      color: #ffffff;
+      background: #ffffff; /* UBah ke putih */
+      color: #000000; 
       margin: 0;
       padding: 20px;
       display: flex;
@@ -18,93 +18,102 @@
       align-items: center;
       min-height: 100vh;
     }
+
     .container {
       max-width: 800px;
-      background: rgba(0, 0, 0, 0.8);
+      background: #ffffff;  /* putih */
       padding: 30px;
       border-radius: 15px;
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+      box-shadow: 0 0 15px rgba(0,0,0,0.1); /* bayangan lembut */
       text-align: center;
+      border: 1px solid #ddd;
     }
+
     h1 {
-      color: #00FFFF;
-      text-shadow: 0 0 10px #00FFFF;
+      color: #0077cc;
+      text-shadow: 0 0 5px rgba(0, 119, 204, 0.4);
       margin-bottom: 20px;
     }
+
     .data-card {
-      background: rgba(255, 255, 255, 0.1);
+      background: #f7f7f7;
       padding: 15px;
       margin: 10px 0;
       border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 255, 255, 0.3);
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
       transition: all 0.3s ease;
     }
+
     .data-card:hover {
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+      transform: scale(1.03);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
+
     .data-label {
       font-size: 1.2em;
-      color: #ffffff;
-      text-shadow: 0 0 5px #ffffff;
+      color: #000;
     }
+
     .data-value {
       font-size: 1.5em;
       font-weight: bold;
-    }
-    .status-high { color: #FF073A; text-shadow: 0 0 10px #FF073A; }
-    .status-medium { color: #FFFF00; text-shadow: 0 0 10px #FFFF00; }
-    .status-clean { color: #00FFFF; text-shadow: 0 0 10px #00FFFF; }
-    .refresh-btn {
-      background: #00FFFF;
       color: #000;
+    }
+
+    .status-high { color: #d00000; }
+    .status-medium { color: #cc7700; }
+    .status-clean { color: #0088cc; }
+
+    .refresh-btn {
+      background: #0077cc;
+      color: #ffffff;
       border: none;
       padding: 10px 20px;
       border-radius: 5px;
       font-family: 'Orbitron', sans-serif;
       font-size: 1em;
       cursor: pointer;
-      box-shadow: 0 0 10px #00FFFF;
       margin-top: 20px;
       transition: all 0.3s ease;
     }
+
     .refresh-btn:hover {
-      background: #ffffff;
-      box-shadow: 0 0 15px #ffffff;
+      background: #005fa3;
     }
+
     canvas {
       margin-top: 20px;
-      background: rgba(255, 255, 255, 0.1);
+      background: #f7f7f7;
       border-radius: 10px;
       padding: 10px;
     }
-    @media (max-width: 600px) {
-      .container { padding: 15px; }
-      .data-card { margin: 5px 0; }
-      .data-label { font-size: 1em; }
-      .data-value { font-size: 1.2em; }
-    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h1>Monitor Polusi Udara</h1>
+
     <div class="data-card">
       <div class="data-label">Waktu</div>
       <div class="data-value" id="time">Loading...</div>
     </div>
+
     <div class="data-card">
       <div class="data-label">Kadar CO (MQ-7)</div>
       <div class="data-value" id="co">Loading...</div>
     </div>
+
     <div class="data-card">
       <div class="data-label">Kualitas Udara (MQ-135)</div>
       <div class="data-value" id="air_quality">Loading...</div>
     </div>
+
     <div class="data-card">
       <div class="data-label">Status</div>
       <div class="data-value" id="status">Loading...</div>
     </div>
+
     <canvas id="pollutionChart" height="150"></canvas>
     <button class="refresh-btn" onclick="fetchData()">Refresh Data</button>
   </div>
@@ -124,16 +133,16 @@
           {
             label: 'Kadar CO (ppm)',
             data: coData,
-            borderColor: '#FF073A',
-            backgroundColor: 'rgba(255, 7, 58, 0.2)',
+            borderColor: '#d00000',
+            backgroundColor: 'rgba(208,0,0,0.2)',
             fill: true,
             tension: 0.4
           },
           {
             label: 'Kualitas Udara (ppm)',
             data: airQualityData,
-            borderColor: '#00FFFF',
-            backgroundColor: 'rgba(0, 255, 255, 0.2)',
+            borderColor: '#0077cc',
+            backgroundColor: 'rgba(0,119,204,0.2)',
             fill: true,
             tension: 0.4
           }
@@ -142,46 +151,43 @@
       options: {
         responsive: true,
         scales: {
-          y: { beginAtZero: true, max: 1000, title: { display: true, text: 'PPM', color: '#ffffff' } },
-          x: { title: { display: true, text: 'Waktu', color: '#ffffff' } }
-        },
-        plugins: { legend: { labels: { color: '#ffffff' } } }
+          y: { beginAtZero: true, max: 1000 },
+          x: {}
+        }
       }
     });
 
     async function fetchData() {
       try {
-        const response = await fetch('http://YOUR_ESP32_IP_ADDRESS/data'); // Ganti dengan IP ESP32
+        const response = await fetch('http://YOUR_ESP32_IP_ADDRESS/data');
         const data = await response.json();
+
         document.getElementById('time').textContent = data.time;
         document.getElementById('co').textContent = data.co.toFixed(2) + ' ppm';
         document.getElementById('air_quality').textContent = data.air_quality.toFixed(2) + ' ppm';
-        const statusElement = document.getElementById('status');
-        statusElement.textContent = data.status;
-        statusElement.className = 'data-value ' + (data.status.includes('TINGGI') ? 'status-high' :
-                                                  data.status.includes('SEDANG') ? 'status-medium' : 'status-clean');
 
-        // Update grafik
+        const status = document.getElementById('status');
+        status.textContent = data.status;
+        status.className = 'data-value ' +
+          (data.status.includes('TINGGI') ? 'status-high' :
+           data.status.includes('SEDANG') ? 'status-medium' : 'status-clean');
+
         labels.push(data.time);
         coData.push(data.co);
         airQualityData.push(data.air_quality);
+
         if (labels.length > maxDataPoints) {
           labels.shift();
           coData.shift();
           airQualityData.shift();
         }
-        chart.data.labels = labels;
-        chart.data.datasets[0].data = coData;
-        chart.data.datasets[1].data = airQualityData;
+
         chart.update();
       } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('status').textContent = 'Gagal memuat data';
-        document.getElementById('status').className = 'data-value status-high';
+        console.log("Error:", error);
       }
     }
 
-    // Ambil data setiap 2 detik
     fetchData();
     setInterval(fetchData, 2000);
   </script>
