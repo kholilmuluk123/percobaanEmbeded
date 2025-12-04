@@ -1,17 +1,19 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Monitor Polusi Udara</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+  <title>Indikator Polusi Udara </title>
+
+  <!-- FONT -->
+  <link href="https://pktgokil-default-rtdb.firebaseio.com/">
+
+  <!-- CHART JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
   <style>
-    /* ===== WHITE MODE ===== */
     body {
       font-family: 'Orbitron', sans-serif;
-      background: #ffffff;       /* Background putih */
-      color: #000000;            /* Warna teks hitam */
+      background: #ffffff;
+      color: #000000;
       margin: 0;
       padding: 20px;
       display: flex;
@@ -21,7 +23,7 @@
     }
 
     .container {
-      max-width: 800px;
+      max-width: 850px;
       background: #ffffff;
       padding: 30px;
       border-radius: 15px;
@@ -61,18 +63,9 @@
       color: #000;
     }
 
-    .status-high {
-      color: #d00000;
-      font-weight: bold;
-    }
-    .status-medium {
-      color: #cc7700;
-      font-weight: bold;
-    }
-    .status-clean {
-      color: #0088cc;
-      font-weight: bold;
-    }
+    .status-high { color: #d00000; font-weight: bold; }
+    .status-medium { color: #cc7700; font-weight: bold; }
+    .status-clean { color: #0088cc; font-weight: bold; }
 
     .refresh-btn {
       background: #0077cc;
@@ -80,11 +73,10 @@
       border: none;
       padding: 10px 20px;
       border-radius: 5px;
-      font-family: 'Orbitron', sans-serif;
       font-size: 1em;
       cursor: pointer;
       margin-top: 20px;
-      transition: all 0.3s ease;
+      transition: 0.3s;
     }
 
     .refresh-btn:hover {
@@ -101,112 +93,126 @@
 </head>
 
 <body>
-  <div class="container">
-    <h1>Monitor Polusi Udara</h1>
+<div class="container">
+  <h1>Realtime Monitoring Sensor</h1>
 
-    <div class="data-card">
-      <div class="data-label">Waktu</div>
-      <div class="data-value" id="time"> --:--:--</div>
-    </div>
-
-    <div class="data-card">
-      <div class="data-label">Kadar CO (MQ-7)</div>
-      <div class="data-value" id="co"> </div>
-    </div>
-
-    <div class="data-card">
-      <div class="data-label">Kualitas Udara (MQ-135)</div>
-      <div class="data-value" id="air_quality"> </div>
-    </div>
-
-    <div class="data-card">
-      <div class="data-label">Polusi Udara (MQ-135)</div>
-      <div class="data-value" id="air_dust"> </div>
-    </div>
-
-    <div class="data-card">
-      <div class="data-label">Status</div>
-      <div class="data-value" id="status"> </div>
-    </div>
-
-    <canvas id="pollutionChart" height="150"></canvas>
-    <button class="refresh-btn" onclick="fetchData()">Refresh Data</button>
+  <div class="data-card">
+    <div class="data-label">Waktu</div>
+    <div class="data-value" id="waktu"> --:--:-- </div>
   </div>
 
-  <script>
-    let coData = [];
-    let airQualityData = [];
-    let labels = [];
-    const maxDataPoints = 10;
+  <div class="data-card">
+    <div class="data-label">MQ-7 (CO)</div>
+    <div class="data-value" id="mq7"> -- </div>
+  </div>
 
-    const ctx = document.getElementById('pollutionChart').getContext('2d');
-    const chart = new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: labels,
-        datasets: [
-          {
-            label: 'Kadar CO (ppm)',
-            data: coData,
-            borderColor: '#d00000',
-            backgroundColor: 'rgba(208,0,0,0.2)',
-            fill: true,
-            tension: 0.4
-          },
-          {
-            label: 'Kualitas Udara (ppm)',
-            data: airQualityData,
-            borderColor: '#0077cc',
-            backgroundColor: 'rgba(0,119,204,0.2)',
-            fill: true,
-            tension: 0.4
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true, max: 1000 },
-          x: {}
+  <div class="data-card">
+    <div class="data-label">MQ-135 (Gas)</div>
+    <div class="data-value" id="mq135"> -- </div>
+  </div>
+
+  <div class="data-card">
+    <div class="data-label">Debu (GP2Y1010)</div>
+    <div class="data-value" id="dust"> -- </div>
+  </div>
+
+  <div class="data-card">
+    <div class="data-label">Status</div>
+    <div class="data-value" id="status"> -- </div>
+  </div>
+
+  <canvas id="chart" height="150"></canvas>
+  <button class="refresh-btn" onclick="getData()">Refresh</button>
+</div>
+
+<script>
+  const url = "https://pktgokil-default-rtdb.firebaseio.com/iot/sensor.json";
+
+  let mq7Data = [];
+  let mq135Data = [];
+  let dustData = [];
+  let labels = [];
+  const maxPoints = 10;
+
+  const ctx = document.getElementById("chart").getContext("2d");
+  const chart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "MQ-7",
+          data: mq7Data,
+          borderColor: "#d00000",
+          backgroundColor: "rgba(208,0,0,0.2)",
+          fill: true,
+          tension: 0.4
+        },
+        {
+          label: "MQ-135",
+          data: mq135Data,
+          borderColor: "#0077cc",
+          backgroundColor: "rgba(0,119,204,0.2)",
+          fill: true,
+          tension: 0.4
+        },
+        {
+          label: "Debu GP2Y",
+          data: dustData,
+          borderColor: "#009900",
+          backgroundColor: "rgba(0,153,0,0.2)",
+          fill: true,
+          tension: 0.4
         }
-      }
-    });
-
-    async function fetchData() {
-      try {
-        const response = await fetch('http://YOUR_ESP32_IP_ADDRESS/data');
-        const data = await response.json();
-
-        document.getElementById('time').textContent = data.time;
-        document.getElementById('co').textContent = data.co.toFixed(2) + ' ppm';
-        document.getElementById('air_quality').textContent = data.air_quality.toFixed(2) + ' ppm';
-
-        const statusEl = document.getElementById('status');
-        statusEl.textContent = data.status;
-
-        statusEl.className = 'data-value ' +
-          (data.status.includes('TINGGI') ? 'status-high' :
-           data.status.includes('SEDANG') ? 'status-medium' : 'status-clean');
-
-        labels.push(data.time);
-        coData.push(data.co);
-        airQualityData.push(data.air_quality);
-
-        if (labels.length > maxDataPoints) {
-          labels.shift();
-          coData.shift();
-          airQualityData.shift();
-        }
-
-        chart.update();
-      } catch (error) {
-        console.log("Error:", error);
-      }
+      ]
     }
+  });
 
-    fetchData();
-    setInterval(fetchData, 2000);
-  </script>
+  function getStatus(m7, m135, dust) {
+    if (m7 > 700 || m135 > 700 || dust > 500) return "TINGGI";
+    if (m7 > 300 || m135 > 300 || dust > 200) return "SEDANG";
+    return "BERSIH";
+  }
+
+  async function getData() {
+    try {
+      const res = await fetch(url);
+      const d = await res.json();
+
+      document.getElementById("waktu").textContent = d.waktu;
+      document.getElementById("mq7").textContent = d.mq7;
+      document.getElementById("mq135").textContent = d.mq135;
+      document.getElementById("dust").textContent = d.dust;
+
+      const status = getStatus(d.mq7, d.mq135, d.dust);
+      const statusEl = document.getElementById("status");
+      statusEl.textContent = status;
+
+      statusEl.className = "data-value " +
+        (status === "TINGGI" ? "status-high" :
+         status === "SEDANG" ? "status-medium" : "status-clean");
+
+      labels.push(d.waktu);
+      mq7Data.push(d.mq7);
+      mq135Data.push(d.mq135);
+      dustData.push(d.dust);
+
+      if (labels.length > maxPoints) {
+        labels.shift(); mq7Data.shift(); mq135Data.shift(); dustData.shift();
+      }
+
+      chart.update();
+
+    } catch (e) {
+      console.log("Error fetching:", e);
+    }
+  }
+
+  setInterval(getData, 1000);
+  getData();
+</script>
+
 </body>
 </html>
+
 
