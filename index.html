@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Indikator Polusi Udara </title>
+  <title>Realtime Monitoring Sensor</title>
 
   <!-- FONT -->
-  <link href="https://pktgokil-default-rtdb.firebaseio.com/">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
   <!-- CHART JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -126,7 +126,18 @@
 </div>
 
 <script>
-  const url = "https://pktgokil-default-rtdb.firebaseio.com/iot/sensor.json";
+
+  /* ===========================================
+     🔗 TAUTAN API FIREBASE (FINAL)
+     =========================================== */
+  const url =
+    "https://pktgokil-default-rtdb.firebaseio.com/sensor.json";
+
+  /*  
+     Jika database PRIVATE:
+     const url =
+       "https://pktgokil-default-rtdb.firebaseio.com/";
+  */
 
   let mq7Data = [];
   let mq135Data = [];
@@ -179,12 +190,13 @@
       const res = await fetch(url);
       const d = await res.json();
 
+      // ❗ Sesuai struktur Firebase: waktu, mq7, mq135, debu
       document.getElementById("waktu").textContent = d.waktu;
       document.getElementById("mq7").textContent = d.mq7;
       document.getElementById("mq135").textContent = d.mq135;
-      document.getElementById("dust").textContent = d.dust;
+      document.getElementById("dust").textContent = d.debu;
 
-      const status = getStatus(d.mq7, d.mq135, d.dust);
+      const status = getStatus(d.mq7, d.mq135, d.debu);
       const statusEl = document.getElementById("status");
       statusEl.textContent = status;
 
@@ -195,10 +207,13 @@
       labels.push(d.waktu);
       mq7Data.push(d.mq7);
       mq135Data.push(d.mq135);
-      dustData.push(d.dust);
+      dustData.push(d.debu);
 
       if (labels.length > maxPoints) {
-        labels.shift(); mq7Data.shift(); mq135Data.shift(); dustData.shift();
+        labels.shift();
+        mq7Data.shift();
+        mq135Data.shift();
+        dustData.shift();
       }
 
       chart.update();
@@ -214,5 +229,6 @@
 
 </body>
 </html>
+
 
 
