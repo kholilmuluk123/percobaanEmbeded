@@ -192,12 +192,12 @@
       const d = await res.json();
 
       // ❗ Sesuai struktur Firebase: waktu, mq7, mq135, debu
-      document.getElementById("waktu").textContent = d.waktu;
-      document.getElementById("mq7").textContent = d.mq7;
-      document.getElementById("mq135").textContent = d.mq135;
-      document.getElementById("dust").textContent = d.debu;
-
-      const status = getStatus(d.mq7, d.mq135, d.debu);
+    document.getElementById("dust").textContent = d.dust;
+    document.getElementById("mq7").textContent = d.mq7;
+    document.getElementById("mq135").textContent = d.mq135;
+    document.getElementById("waktu").textContent = d.waktu;
+  
+      const status = getStatus(d.mq7, d.mq135, d.dust);
       const statusEl = document.getElementById("status");
       statusEl.textContent = status;
 
@@ -208,7 +208,7 @@
       labels.push(d.waktu);
       mq7Data.push(d.mq7);
       mq135Data.push(d.mq135);
-      dustData.push(d.debu);
+      dustData.push(d.dust);
 
       if (labels.length > maxPoints) {
         labels.shift();
