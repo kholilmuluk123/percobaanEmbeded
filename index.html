@@ -3,10 +3,7 @@
 <head>
   <title>Realtime Monitoring Sensor</title>
 
-  <!-- FONT -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
-  <!-- CHART JS -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -52,17 +49,8 @@
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
     }
 
-    .data-label {
-      font-size: 1.2em;
-      color: #222;
-    }
-
-    .data-value {
-      font-size: 1.5em;
-      font-weight: bold;
-      color: #000;
-    }
-
+    .data-label { font-size: 1.2em; color: #222; }
+    .data-value { font-size: 1.5em; font-weight: bold; color: #000; }
     .status-high { color: #d00000; font-weight: bold; }
     .status-medium { color: #cc7700; font-weight: bold; }
     .status-clean { color: #0088cc; font-weight: bold; }
@@ -79,9 +67,7 @@
       transition: 0.3s;
     }
 
-    .refresh-btn:hover {
-      background: #005fa3;
-    }
+    .refresh-btn:hover { background: #005fa3; }
 
     canvas {
       margin-top: 20px;
@@ -128,17 +114,10 @@
 <script>
 
   /* ===========================================
-     🔗 TAUTAN API FIREBASE (FINAL)
+     🔗 URL FIREBASE TERBARU SESUAI STRUKTUR MU
      =========================================== */
   const url =
-    "const url =
     "https://pktgokil-default-rtdb.firebaseio.com/iot/sensor.json";
-
-  /*  
-     Jika database PRIVATE:
-     const url =
-       "https://pktgokil-default-rtdb.firebaseio.com/";
-  */
 
   let mq7Data = [];
   let mq135Data = [];
@@ -191,19 +170,22 @@
       const res = await fetch(url);
       const d = await res.json();
 
-      // ❗ Sesuai struktur Firebase: waktu, mq7, mq135, debu
-    document.getElementById("dust").textContent = d.dust;
-    document.getElementById("mq7").textContent = d.mq7;
-    document.getElementById("mq135").textContent = d.mq135;
-    document.getElementById("waktu").textContent = d.waktu;
-  
+      document.getElementById("waktu").textContent = d.waktu;
+      document.getElementById("mq7").textContent = d.mq7;
+      document.getElementById("mq135").textContent = d.mq135;
+      document.getElementById("dust").textContent = d.dust;
+
       const status = getStatus(d.mq7, d.mq135, d.dust);
       const statusEl = document.getElementById("status");
-      statusEl.textContent = status;
 
-      statusEl.className = "data-value " +
-        (status === "TINGGI" ? "status-high" :
-         status === "SEDANG" ? "status-medium" : "status-clean");
+      statusEl.textContent = status;
+      statusEl.className =
+        "data-value " +
+        (status === "TINGGI"
+          ? "status-high"
+          : status === "SEDANG"
+          ? "status-medium"
+          : "status-clean");
 
       labels.push(d.waktu);
       mq7Data.push(d.mq7);
@@ -230,6 +212,7 @@
 
 </body>
 </html>
+
 
 
 
