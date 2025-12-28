@@ -160,8 +160,8 @@
   });
 
   function getStatus(m7, m135, dust) {
-    if (m7 > 700 || m135 > 700 || dust > 500) return "TINGGI";
-    if (m7 > 300 || m135 > 300 || dust > 200) return "SEDANG";
+    if (m7 > 400 || m135 > 70 || dust > 25) return "TINGGI";
+    if (m7 > 300 || m135 > 30 || dust > 13) return "SEDANG";
     return "BERSIH";
   }
 
